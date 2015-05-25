@@ -1,18 +1,18 @@
 Package.describe({
   name: 'maxjohansen:simplestripe',
   version: '0.0.1',
-  // Brief, one-line summary of the package.
-  summary: '',
-  // URL to the Git repository containing the source code for this package.
-  git: '',
-  // By default, Meteor will default to using README.md for documentation.
-  // To avoid submitting documentation, set this field to null.
+  summary: 'A simplified version of https://github.com/tyler-johnson/stripe-meteor',
+  git: 'https://github.com/macsj200/simplestripe',
   documentation: 'README.md'
 });
 
 Package.onUse(function(api) {
+  api.use("templating", "client");
+  api.use("stripe-meteor", "client");
+  api.use("meteor-async", "client");
   api.versionsFrom('1.1.0.2');
-  api.addFiles('simplestripe.js');
+  api.addFiles('[Methods.js]', 'server');
+  api.addFiles('[Client.js, creditCardForm.html]', 'client');
 });
 
 Package.onTest(function(api) {
