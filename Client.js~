@@ -1,4 +1,4 @@
-createCustomer = function(event){
+clientCreateCustomer = function(event){
     var ccNum = event.target.ccNum.value;
     var cvc = event.target.cvc.value;
     var expMo = event.target.expMo.value;
