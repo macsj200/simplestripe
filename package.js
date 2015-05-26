@@ -1,6 +1,6 @@
 Package.describe({
   name: 'maxjohansen:simplestripe',
-  version: '0.0.8',
+  version: '0.0.9',
   summary: 'A simplified version of https://github.com/tyler-johnson/stripe-meteor',
   git: 'https://github.com/macsj200/simplestripe',
   documentation: 'README.md'
