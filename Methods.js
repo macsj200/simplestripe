@@ -5,7 +5,7 @@ var done = function(err, result){
 Meteor.methods({
     chargeCard:function(argObject){
         var Stripe = StripeAPI(Meteor.settings.stripe.secretKey);
-        console.log('beginning charge');
+        console.log('beginning charge swag');
         var charge = Async.runSync(function(done){
             console.log('beginning async function call');
             Stripe.charges.create({
