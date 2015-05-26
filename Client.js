@@ -32,6 +32,12 @@ createCustomer = function(event){
     return false;
 };
 
+Meteor.helpers({
+    chargeWentThrough:function(){
+        return Session.get('charge').status === "succeeded";
+    }
+});
+
 createCharge = function(event){
     var callArg = {
         stripeId: Meteor.user().profile.stripeId,
