@@ -35,12 +35,10 @@ createCustomer = function(event){
 createCharge = function(event){
     var callArg = {
         stripeId: Meteor.user().profile.stripeId,
-        amount:1000
+        amount:Session.get('item').price * 1000
     };
 
     Meteor.call('chargeCard', callArg, function(err,data){
-        data.item = event.item;
-
         Session.set('charge', data);
         Session.set('chargeError', err);
     });
@@ -51,9 +49,10 @@ if(Meteor.isClient){
         if(Session.get("charge")){
             var charge = Session.get("charge");
 
+            console.log(charge);
+
             if(charge.status === "succeeded"){
-                charge.item.purchased = true;
-                charge.item.owner = Meteor.userId();
+                successFunction();
             }
         }
     });
