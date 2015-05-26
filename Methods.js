@@ -1,6 +1,6 @@
 if(Meteor.isServer){
     var done = function(err, result){
-        console.log(err,result);
+        console.log('api call done',err,result);
     };
 
     Meteor.methods({
@@ -8,28 +8,24 @@ if(Meteor.isServer){
             var Stripe = StripeAPI(Meteor.settings.stripe.secretKey);
 
             var charge = null;
-            var charge = Async.runSync(function(done){
+
+            var apiResult = Async.runSync(function(done){
                 Stripe.charges.create({
                     amount: argObject.amount,
                     currency: 'usd',
                     customer: argObject.stripeId
                 },done);
-            }).result;
+            });
 
-            //Stripe.charges.create({
-            //    amount: argObject.amount,
-            //    currency: 'usd',
-            //    customer: argObject.stripeId
-            //},function(err,result){
-            //    if(err){
-            //        console.log(err);
-            //    } else{
-            //        charge = result;
-            //        console.log('assigned charge ', charge);
-            //    }
-            //});
-            //
-            //console.log('returning charge', charge);
+            //code to forward response to client
+
+            if(apiResult.result){
+                //if successful
+                charge = apiResult.result;
+            } else{
+                //if error
+                charge = apiResult;
+            }
 
             return charge;
 

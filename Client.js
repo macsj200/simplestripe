@@ -13,15 +13,19 @@ createCustomer = function(event){
         email:email
     }, function(status, response) {
         var callArg = {};
-        callArg.stripeToken = response.id;
+        //callArg.stripeToken = response.id;
 
-        Meteor.call('createCustomer', callArg, function(err,data){
-            if(err){
-                console.log(err);
-            } else{
-                Meteor.users.update(Meteor.userId(), {$set:{profile:{stripeId:data.id}}});
-            }
-        });
+        if(response.error){
+            Session.set('cardEnterError', response.error);
+        } else {
+            Meteor.call('createCustomer', callArg, function(err,data){
+                if(err){
+                    console.log(err);
+                } else{
+                    Meteor.users.update(Meteor.userId(), {$set:{profile:{stripeId:data.id}}});
+                }
+            });
+        }
     });
 
     event.target.ccNum.value = '';
@@ -39,8 +43,11 @@ createCharge = function(event){
     };
 
     Meteor.call('chargeCard', callArg, function(err,data){
-        Session.set('charge', data);
-        Session.set('chargeError', err);
+        if(err){
+            console.log(err);
+        } else{
+            Session.set('charge', data);
+        }
     });
 };
 
@@ -49,17 +56,42 @@ if(Meteor.isClient){
         if(Session.get("charge")){
             var charge = Session.get("charge");
 
-            console.log(charge);
-
             if(charge.status === "succeeded"){
                 successFunction();
             }
         }
     });
 
-    Template.body.helpers({
+
+    Template.purchaseView.events({
+        'submit .ccform':function(event){
+            createCustomer(event);
+
+            return false;
+        },
+        'click .purchase':function(event){
+            this.ownerId = Meteor.userId();
+
+            Session.set('item', this);
+
+            createCharge(event);
+            return false;
+        }
+    });
+
+    Template.purchaseView.helpers({
+        userOwnsItem:function(){
+            var item = Session.get('item');
+            return item.ownerId === Meteor.userId();
+        },
         charge:function(){
             return Session.get('charge');
+        }
+    });
+
+    Template.creditCardForm.helpers({
+        cardEnterError:function(){
+            return Session.get('cardEnterError');
         }
     });
 

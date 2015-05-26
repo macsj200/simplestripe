@@ -1,17 +1,25 @@
 <template name="creditCardForm">
-    <form class="ccform">
-        <div class="input-group"><label for="ccNum">Card Number</label>
-            <input class="form-control" type="number" name="ccNum" id="ccNum"></div>
+    <div class="creditCardFormContainer">
+        {{#if cardEnterError}}
+            <div class="alert alert-danger" role="alert">
+                {{cardEnterError.message}}
+            </div>
+        {{/if}}
 
-        <div class="input-group"><label for="cvc">CVC</label>
-            <input class="form-control" type="number" name="cvc" id="cvc"></div>
+        <form class="ccform">
+            <div class="input-group"><label for="ccNum">Card Number</label>
+                <input class="form-control" type="number" name="ccNum" id="ccNum"></div>
 
-        <div class="input-group"><label for="expMo">Expiration Month</label>
-            <input class="form-control" type="number" name="expMo" id="expMo"></div>
+            <div class="input-group"><label for="cvc">CVC</label>
+                <input class="form-control" type="number" name="cvc" id="cvc"></div>
 
-        <div class="input-group"><label for="expYr">2 Digit Expiration Year</label>
-            <input class="form-control" type="number" name="expYr" id="expYr"></div>
+            <div class="input-group"><label for="expMo">Expiration Month</label>
+                <input class="form-control" type="number" name="expMo" id="expMo"></div>
 
-        <input class="btn btn-success" type="submit" value="Submit">
-    </form>
+            <div class="input-group"><label for="expYr">2 Digit Expiration Year</label>
+                <input class="form-control" type="number" name="expYr" id="expYr"></div>
+
+            <input class="btn btn-success" type="submit" value="Submit">
+        </form>
+    </div>
 </template>
