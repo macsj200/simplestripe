@@ -42,7 +42,7 @@ createCharge = function(event){
 };
 
 Meteor.startup(function() {
-    Session.setDefault('charge', null);
+    Session.setDefault('charge', {status:"n/a"});
     Session.setDefault('chargeError', null);
 
     Stripe.setPublishableKey(Meteor.settings.public.stripe.publishableKey);

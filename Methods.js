@@ -8,7 +8,7 @@ Meteor.methods({
 
         var charge = Async.runSync(function(done){
             Stripe.charges.create({
-                amount: 1000,
+                amount: argObject.amount,
                 currency: 'usd',
                 customer: argObject.stripeId
             },done);
