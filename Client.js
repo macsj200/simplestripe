@@ -34,7 +34,8 @@ createCustomer = function(event){
 
 createCharge = function(event){
     var callArg = {
-        stripeId: Meteor.user().profile.stripeId
+        stripeId: Meteor.user().profile.stripeId,
+        amount:1000
     };
 
     Meteor.call('chargeCard', callArg, function(err,data){
