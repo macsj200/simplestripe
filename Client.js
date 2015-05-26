@@ -32,12 +32,6 @@ createCustomer = function(event){
     return false;
 };
 
-Template.body.helpers({
-    chargeWentThrough:function(){
-        return Session.get('charge').status === "succeeded";
-    }
-});
-
 createCharge = function(event){
     var callArg = {
         stripeId: Meteor.user().profile.stripeId,
@@ -50,16 +44,25 @@ createCharge = function(event){
     });
 };
 
-Meteor.startup(function() {
-    Session.setDefault('charge', {status:"n/a"});
-    Session.setDefault('chargeError', null);
-
-    Stripe.setPublishableKey(Meteor.settings.public.stripe.publishableKey);
-
-    var handler = StripeCheckout.configure({
-        key: Meteor.settings.public.stripe.publishableKey,
-        token: function(token) {
-
+if(Meteor.isClient){
+    Template.body.helpers({
+        chargeWentThrough:function(){
+            return Session.get('charge').status === "succeeded";
         }
     });
-});
+
+    Meteor.startup(function() {
+        Session.setDefault('charge', {status:"n/a"});
+        Session.setDefault('chargeError', null);
+
+        Stripe.setPublishableKey(Meteor.settings.public.stripe.publishableKey);
+
+        var handler = StripeCheckout.configure({
+            key: Meteor.settings.public.stripe.publishableKey,
+            token: function(token) {
+
+            }
+        });
+    });
+
+}
