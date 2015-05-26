@@ -32,7 +32,7 @@ createCustomer = function(event){
     return false;
 };
 
-Meteor.helpers({
+Template.body.helpers({
     chargeWentThrough:function(){
         return Session.get('charge').status === "succeeded";
     }
