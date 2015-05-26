@@ -23,5 +23,5 @@ Package.onUse(function(api) {
 Package.onTest(function(api) {
   api.use('tinytest');
   api.use('maxjohansen:simplestripe');
-  api.addFiles('simplestripe-tests.js');
+  //api.addFiles('simplestripe-tests.js');
 });
