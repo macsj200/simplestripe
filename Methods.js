@@ -14,6 +14,8 @@ Meteor.methods({
             },done);
         }).result;
 
+        console.log(charge);
+
         return charge;
 
     },
