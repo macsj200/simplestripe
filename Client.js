@@ -3,12 +3,14 @@ createCustomer = function(event){
     var cvc = event.target.cvc.value;
     var expMo = event.target.expMo.value;
     var expYr = event.target.expYr.value;
+    var email = Meteor.user().emails[0];
 
     Stripe.card.createToken({
         number: ccNum,
         cvc: cvc,
         exp_month: expMo,
-        exp_year: expYr
+        exp_year: expYr,
+        email:email
     }, function(status, response) {
         var callArg = {};
         callArg.stripeToken = response.id;
