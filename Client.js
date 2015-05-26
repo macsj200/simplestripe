@@ -39,21 +39,33 @@ createCharge = function(event){
     };
 
     Meteor.call('chargeCard', callArg, function(err,data){
+        data.item = event.item;
+
         Session.set('charge', data);
         Session.set('chargeError', err);
     });
 };
 
 if(Meteor.isClient){
+    Tracker.autorun(function () {
+        if(Session.get("charge")){
+            var charge = Session.get("charge");
+
+            if(charge.status === "succeeded"){
+                charge.item.purchased = true;
+                charge.item.owner = Meteor.userId();
+            }
+        }
+    });
+
     Template.body.helpers({
-        chargeWentThrough:function(){
-            return Session.get('charge').status === "succeeded";
+        charge:function(){
+            return Session.get('charge');
         }
     });
 
     Meteor.startup(function() {
         Session.setDefault('charge', {status:"n/a"});
-        Session.setDefault('chargeError', null);
 
         Stripe.setPublishableKey(Meteor.settings.public.stripe.publishableKey);
 
@@ -64,5 +76,4 @@ if(Meteor.isClient){
             }
         });
     });
-
 }

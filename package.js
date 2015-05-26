@@ -1,6 +1,6 @@
 Package.describe({
   name: 'simplestripe',
-  version: '0.1.3',
+  version: '0.1.4',
   summary: 'A simplified version of https://github.com/tyler-johnson/stripe-meteor',
   git: 'https://github.com/macsj200/simplestripe',
   documentation: 'README.md'
@@ -8,6 +8,8 @@ Package.describe({
 
 Package.onUse(function(api) {
   api.use(["templating"], "client");
+  api.use(["tracker"], "client");
+  api.use(["session"], "client");
   api.use("mrgalaxy:stripe@2.1.0", ["client", "server"]);
   api.use("meteorhacks:async@1.0.0", "server");
   api.versionsFrom('METEOR@1.1.0.2');
