@@ -5,6 +5,9 @@ This library is a simplified version of [stripe-meteor](https://github.com/tyler
 # Installation
 
 1. Create a meteor project
+2. `meteor add maxjohansen:simplestripe`
+
+# Installation from github
 2. Create a packages directory in the project
 3. Clone [simplestripe](https://github.com/macsj200/simplestripe) into packages folder
 4. Change back to project root and install package `meteor add simplestripe`
