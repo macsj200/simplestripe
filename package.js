@@ -1,6 +1,6 @@
 Package.describe({
   name: 'maxjohansen:simplestripe',
-  version: '0.0.2',
+  version: '0.0.3',
   summary: 'A simplified version of https://github.com/tyler-johnson/stripe-meteor',
   git: 'https://github.com/macsj200/simplestripe',
   documentation: 'README.md'
@@ -13,6 +13,9 @@ Package.onUse(function(api) {
   api.versionsFrom('METEOR@1.1.0.2');
   api.addFiles('Methods.js', 'server');
   api.addFiles(['Client.js', 'creditCardForm.html'], 'client');
+  
+  api.export('createCustomer', 'client');
+  api.export('createCharge', 'client');
 });
 
 Package.onTest(function(api) {
