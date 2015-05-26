@@ -1,5 +1,5 @@
 var done = function(err, result){
-    //console.log(err,result);
+    console.log(err,result);
 };
 
 Meteor.methods({
@@ -13,8 +13,6 @@ Meteor.methods({
                 customer: argObject.stripeId
             },done);
         }).result;
-
-        console.log(charge);
 
         return charge;
 
