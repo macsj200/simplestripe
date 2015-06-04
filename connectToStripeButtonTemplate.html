@@ -1,0 +1,7 @@
+<template name="connectToStripeButtonTemplate">
+    {{#if currentUser}}
+        <a href="https://connect.stripe.com/oauth/authorize?response_type=code&client_id={{stripeClientId}}&scope=read_write" class="stripe-connect"><span>Connect with Stripe</span></a>
+    {{else}}
+        <div class="alert alert-info" role="alert">Sign in to make transactions with stripe</div>
+    {{/if}}
+</template>

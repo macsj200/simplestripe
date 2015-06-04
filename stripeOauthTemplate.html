@@ -1,0 +1,13 @@
+<template name="stripeOauthTemplate">
+    {{#if stripeErr}}
+        <div class="alert alert-danger" role="alert">Stripe had an error: {{stripeErr.message}}</div>
+    {{/if}}
+
+    {{#if stripeData}}
+        <div class="alert alert-success" role="alert">Stripe connected just fine :-)</div>
+    {{/if}}
+
+    {{#if currentUser}}
+        <div class="alert alert-success" role="alert">You're already connected to stripe</div>
+    {{/if}}
+</template>
