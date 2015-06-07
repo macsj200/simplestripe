@@ -30,17 +30,28 @@ if(Meteor.isServer){
                 return result.data;
             }
         },
-        chargeCard:function(token,activity){
+        chargeCard:function(token,item){
             var Stripe = StripeAPI(Meteor.settings.private.stripe.testSecretKey);
 
-            Stripe.charges.create({
-                amount: activity.cost * 100,
-                currency: 'usd',
-                source: token.id,
-                destination:Meteor.users.findOne(activity.vendor).stripe.stripe_user_id
-            }, function(err, charge) {
-                console.log(err, charge);
-            });
+            var error = null;
+            var charge = null;
+
+            (function(){
+                Stripe.charges.create({
+                    amount: item.cost * 100,
+                    currency: 'usd',
+                    source: token.id,
+                    destination:Meteor.users.findOne(item.vendor).stripe.stripe_user_id
+                }, function(err, charge) {
+                    console.log(err, charge);
+                    error = err;
+                    charge = charge;
+                });
+            })();
+
+            res = {error:error, charge:charge};
+
+            return res;
         }
     });
 
@@ -65,7 +76,10 @@ if(Meteor.isClient){
             key: Meteor.settings.public.stripe.testPublishableKey,
             image: '/img/documentation/checkout/marketplace.png',
             token: function(token) {
-                Meteor.call('chargeCard', token, Session.get('currentItem'));
+                Meteor.call('chargeCard', token, Session.get('currentItem'),function(err,data){
+                    Session.set('stripeErr',err);
+                    Session.set('stripeData',data);
+                });
             }
         });
     });
@@ -95,6 +109,15 @@ if(Meteor.isClient){
                 description: this.name,
                 amount: this.amount * 1000
             });
+        }
+    });
+
+    Template.payForItemButtonTemplate.helpers({
+        stripeData:function(){
+            return Session.get('stripeData');
+        },
+        stripeErr:function(){
+            return Session.get('stripeErr');
         }
     });
 }
