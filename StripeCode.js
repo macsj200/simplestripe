@@ -65,7 +65,7 @@ if(Meteor.isClient){
             key: Meteor.settings.public.stripe.testPublishableKey,
             image: '/img/documentation/checkout/marketplace.png',
             token: function(token) {
-                Meteor.call('chargeCard', token, Session.get('currentActivity'));
+                Meteor.call('chargeCard', token, Session.get('currentItem'));
             }
         });
     });
@@ -84,6 +84,17 @@ if(Meteor.isClient){
     Template.connectToStripeButtonTemplate.helpers({
         stripeClientId:function(){
             return Meteor.settings.public.stripe.clientId;
+        }
+    });
+
+    Template.payForItemButtonTemplate.events({
+        'click #payForItemButton':function(event){
+            Session.set('currentItem', this);
+            handler.open({
+                name: 'Demo Site',
+                description: this.name,
+                amount: this.amount * 1000
+            });
         }
     });
 }

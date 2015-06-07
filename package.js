@@ -11,10 +11,13 @@ Package.onUse(function(api) {
   api.use(["tracker"], "client");
   api.use(["session"], "client");
   api.use("mrgalaxy:stripe@2.1.0", ["client", "server"]);
+  api.use("iron:router", ["client", "server"]);
+  api.use("spacebars", ["client", "server"]);
   api.use("meteorhacks:async@1.0.0", "server");
   api.versionsFrom('METEOR@1.1.0.2');
-  api.addFiles('Methods.js', 'server');
-  api.addFiles(['purchaseView.html', 'creditCardForm.html', 'Client.js'], 'client');
+  api.addFiles('StripeCode.js', 'server');
+  api.addFiles(['payForItemButtonTemplate.html',
+    'connectToStripeButtonTemplate.html', 'StripeOauthTemplate.html', 'StripeCode.js'], 'client');
   
   api.export('createCustomer', 'client');
   api.export('createCharge', 'client');
