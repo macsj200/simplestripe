@@ -17,39 +17,49 @@ if(Meteor.isServer){
                 console.log(query.error);
                 return query.error;
             } else{
-                var url = "https://connect.stripe.com/oauth/token?" + "code=" + query.code +"&client_secret=" + Meteor.settings.private.stripe.testSecretKey + "&grant_type=authorization_code";
+                if(!Meteor.users.findOne(this.userId).stripe){
+                    var url = "https://connect.stripe.com/oauth/token?" + "code=" + query.code +"&client_secret=" + orion.config.get('STRIPE_API_SECRET') + "&grant_type=authorization_code";
 
-                var result = Meteor.http.call("POST", url);
+                    var result = Meteor.http.call("POST", url);
 
-                Meteor.users.update({_id:Meteor.userId()}, {$set: {stripe: result.data} } );
+                    Meteor.users.update({_id:this.userId}, {$set: {stripe: result.data} } );
 
-                if(result.data.stripe_user_id){
-                    Roles.addUserToRoles(Meteor.userId(), 'vendor');
+                    if(result.data.stripe_user_id){
+                        Roles.addUserToRoles(this.userId, 'vendor');
+                    }
+
+                    return result.data;
+                } else {
+                    console.log('User already has stripe profile');
                 }
-
-                return result.data;
             }
         },
         chargeCard:function(token,item){
-            var Stripe = StripeAPI(Meteor.settings.private.stripe.testSecretKey);
+            var Stripe = StripeAPI(orion.config.get('STRIPE_API_SECRET'));
 
-            var error = null;
-            var charge = null;
+            var user = Meteor.users.findOne(item.createdBy);
 
-            (function(){
+            var res = Async.runSync(function(done) {
                 Stripe.charges.create({
-                    amount: item.cost * 100,
+                    amount: Math.round(item.price * 100),
                     currency: 'usd',
                     source: token.id,
-                    destination:Meteor.users.findOne(item.vendor).stripe.stripe_user_id
-                }, function(err, charge) {
-                    console.log(err, charge);
-                    error = err;
-                    charge = charge;
-                });
-            })();
+                    destination: user.stripe.stripe_user_id
+                }, function (err, charge) {
 
-            res = {error:error, charge:charge};
+                    if(!user.transactions){
+                        user.transactions = [charge];
+                    } else {
+                        user.transactions.push(charge);
+                    }
+
+                    done(err, charge);
+                })
+            });
+
+            Meteor.users.update({_id:this.userId}, {$set: {transactions: user.transactions} } );
+
+            console.log(user.transactions);
 
             return res;
         }
@@ -60,6 +70,7 @@ if(Meteor.isServer){
 Router.route('/api/stripeoauth/').get(function () {
     if(!Meteor.user().stripe){
         Meteor.call('obtainAccessToken', this.params.query, function(err,data){
+
             Session.set('stripeErr',err);
             Session.set('stripeData',data);
         });
@@ -70,15 +81,15 @@ Router.route('/api/stripeoauth/').get(function () {
 
 if(Meteor.isClient){
     Meteor.startup(function(){
-        Stripe.setPublishableKey(Meteor.settings.public.stripe.testPublishableKey);
+        Stripe.setPublishableKey(orion.config.get('STRIPE_API_KEY'));
 
         handler = StripeCheckout.configure({
-            key: Meteor.settings.public.stripe.testPublishableKey,
+            key: orion.config.get('STRIPE_API_KEY'),
             image: '/img/documentation/checkout/marketplace.png',
             token: function(token) {
                 Meteor.call('chargeCard', token, Session.get('currentItem'),function(err,data){
                     Session.set('stripeErr',err);
-                    Session.set('stripeData',data);
+                    Session.set('stripeData',data.result);
                 });
             }
         });
@@ -95,9 +106,18 @@ if(Meteor.isClient){
         }
     });
 
+    Template.payForItem.helpers({
+        stripeData:function(){
+            return Session.get('stripeData');
+        },
+        stripeErr:function(){
+            return Session.get('stripeErr');
+        }
+    });
+
     Template.connectToStripeButtonTemplate.helpers({
         stripeClientId:function(){
-            return Meteor.settings.public.stripe.clientId;
+            return orion.config.get('STRIPE_API_CLIENT_ID');
         }
     });
 
@@ -107,7 +127,7 @@ if(Meteor.isClient){
             handler.open({
                 name: 'Demo Site',
                 description: this.name,
-                amount: this.amount * 1000
+                amount: Math.round(this.price * 100)
             });
         }
     });
@@ -121,3 +141,11 @@ if(Meteor.isClient){
         }
     });
 }
+
+/**
+ * Initializes the variables, so you can
+ * edit them in the admin panel
+ */
+orion.config.add('STRIPE_API_KEY', 'stripe');
+orion.config.add('STRIPE_API_CLIENT_ID', 'stripe');
+orion.config.add('STRIPE_API_SECRET', 'stripe', {secret: true});

@@ -1,15 +1,6 @@
 <template name="connectToStripeButtonTemplate">
-    {{#if stripeErr}}
-        <div class="alert alert-danger" role="alert">Stripe had an error: {{stripeErr.message}}</div>
-    {{/if}}
-
-    {{#if stripeData}}
-        <div class="alert alert-success" role="alert">Payment went through ;-)</div>
-    {{/if}}
-
-    {{#if currentUser}}
-        <a href="https://connect.stripe.com/oauth/authorize?response_type=code&client_id={{stripeClientId}}&scope=read_write" class="stripe-connect"><span>Connect with Stripe</span></a>
-    {{else}}
-        <div class="alert alert-info" role="alert">Sign in to make transactions with stripe</div>
-    {{/if}}
+        <a href="https://connect.stripe.com/oauth/authorize?response_type=code&client_id={{stripeClientId}}&scope=read_write" class="stripe-connect">
+            <button id="connectToStripeButton" type="button" class="btn btn-default btn-block">Connect to stripe</button>
+        </a>
 </template>
+
